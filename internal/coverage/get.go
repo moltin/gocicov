@@ -2,6 +2,7 @@ package coverage
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
@@ -9,7 +10,7 @@ import (
 )
 
 func runTests() error {
-	cmd := exec.Command("go", "test", "-v", "-coverprofile=c.out", "./...")
+	cmd := exec.Command("go", "test", "-v", "-coverpkg=./...", "-coverprofile=c.out", "./...")
 	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
@@ -22,6 +23,7 @@ func gatherCoverage() (string, error) {
 }
 
 func parseCoverage(coverage string) (Coverage, error) {
+	fmt.Fprintf(os.Stderr, "%s\n", coverage)
 	lines := strings.Split(coverage, "\n")
 	if len(lines) == 0 {
 		return 0, errors.New("no coverage data")
