@@ -53,11 +53,11 @@ func Get() (Coverage, error) {
 	defer os.Remove("c.out")
 	err := runTests()
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 	coverage, err := gatherCoverage()
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 	return parseCoverage(coverage)
 }
