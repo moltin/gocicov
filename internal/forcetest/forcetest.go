@@ -37,6 +37,7 @@ func (f *Forcer) addForcer(path, pkgnam string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Fprintf(os.Stderr, "WARNING: tests needed for %s\n", path)
 	f.files = append(f.files, file)
 	return nil
 }
