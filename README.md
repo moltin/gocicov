@@ -19,27 +19,31 @@ also in hundredths of a percent.
 ## Example usage
 
 ```
-$ coverage=$(go run github.com/moltin/gocicov/cmd/gocicov)
+$ newcoverage=$(COVERAGE=100 COVERAGE_THRESHOLD=200 gocicov)
+WARNING: tests needed for cmd/gocicov
+WARNING: tests needed for internal/coverage
+WARNING: tests needed for internal/forcetest
 testing: warning: no tests to run
 PASS
-coverage: 0.0% of statements
-ok  	github.com/moltin/gocicov/cmd/gocicov	0.286s	coverage: 0.0% of statements [no tests to run]
+coverage: 0.0% of statements in ./...
+ok  	github.com/moltin/gocicov/cmd/gocicov	0.180s	coverage: 0.0% of statements in ./... [no tests to run]
 testing: warning: no tests to run
 PASS
-coverage: 0.0% of statements
-ok  	github.com/moltin/gocicov/internal/coverage	0.152s	coverage: 0.0% of statements [no tests to run]
+coverage: 0.0% of statements in ./...
+ok  	github.com/moltin/gocicov/internal/coverage	0.484s	coverage: 0.0% of statements in ./... [no tests to run]
 testing: warning: no tests to run
 PASS
-coverage: 0.0% of statements
-ok  	github.com/moltin/gocicov/internal/forcetest	0.411s	coverage: 0.0% of statements [no tests to run]
-Total coverage: 0.000000
-$ echo $coverage
+coverage: 0.0% of statements in ./...
+ok  	github.com/moltin/gocicov/internal/forcetest	0.323s	coverage: 0.0% of statements in ./... [no tests to run]
+Total coverage: 0.00%
+Coverage diff: -1.00%
+$ echo $newcoverage
 0
 ```
 
 ## Example buddy action
 
-Having set up project level variables `COVERAGE` (should be settable) and
+Having set up project-level variables `COVERAGE` (should be settable) and
 `COVERAGE_THRESHOLD`:
 ```
   actions:
