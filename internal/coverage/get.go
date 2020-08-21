@@ -2,7 +2,6 @@ package coverage
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
@@ -23,7 +22,6 @@ func gatherCoverage() (string, error) {
 }
 
 func parseCoverage(coverage string) (Coverage, error) {
-	fmt.Fprintf(os.Stderr, "%s\n", coverage)
 	lines := strings.Split(coverage, "\n")
 	if len(lines) == 0 {
 		return 0, errors.New("no coverage data")
