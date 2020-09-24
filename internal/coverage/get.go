@@ -2,8 +2,11 @@ package coverage
 
 import (
 	"errors"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -30,6 +33,26 @@ func runTests(modules modules.List) error {
 	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+func filterCoverage(modules modules.List) error {
+	data, err := ioutil.ReadFile("c.out")
+	if err != nil {
+		return err
+	}
+	f, err := os.Create("c.out")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	for _, line := range strings.Split(string(data), "\n") {
+		parts := strings.Split(line, ":")
+		if len(parts) > 0 && parts[0] != "mode" && !modules.HasImport(filepath.Dir(parts[0])) {
+			continue
+		}
+		fmt.Fprintln(f, line)
+	}
+	return nil
 }
 
 func gatherCoverage() (string, error) {
@@ -66,8 +89,10 @@ func parseCoverage(coverage string) (Coverage, error) {
 }
 
 func Get(modules modules.List) (Coverage, error) {
-	err := runTests(modules)
-	if err != nil {
+	if err := runTests(modules); err != nil {
+		return 0, err
+	}
+	if err := filterCoverage(modules); err != nil {
 		return 0, err
 	}
 	coverage, err := gatherCoverage()
