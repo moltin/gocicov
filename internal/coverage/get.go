@@ -9,7 +9,8 @@ import (
 )
 
 func runTests() error {
-	cmd := exec.Command("go", "test", "-v", "-coverpkg=./...", "-coverprofile=c.out", "./...")
+	cmdString := "go test -v $(go list ./... | grep  /internal/) -coverprofile c.out"
+	cmd := exec.Command("bash", "-c", cmdString)
 	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
@@ -33,6 +34,7 @@ func parseCoverage(coverage string) (Coverage, error) {
 			break
 		}
 	}
+
 	if total == "" {
 		return 0, errors.New("no coverage data")
 	}
@@ -48,7 +50,7 @@ func parseCoverage(coverage string) (Coverage, error) {
 }
 
 func Get() (Coverage, error) {
-	defer os.Remove("c.out")
+	//defer os.Remove("c.out")
 	err := runTests()
 	if err != nil {
 		return 0, err
