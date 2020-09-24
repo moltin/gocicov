@@ -50,7 +50,7 @@ func parseCoverage(coverage string) (Coverage, error) {
 }
 
 func Get() (Coverage, error) {
-	//defer os.Remove("c.out")
+	defer os.Remove("c.out")
 	err := runTests()
 	if err != nil {
 		return 0, err
