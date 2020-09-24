@@ -24,7 +24,7 @@ func filterModules(modules modules.List) []string {
 }
 
 func runTests(modules modules.List) error {
-	args := []string{"test", "-v", "-coverprofile", "c.out"}
+	args := []string{"test", "-coverpkg=./...", "-v", "-coverprofile", "c.out"}
 	args = append(args, filterModules(modules)...)
 	cmd := exec.Command("go", args...)
 	cmd.Stdout = os.Stderr
@@ -66,7 +66,6 @@ func parseCoverage(coverage string) (Coverage, error) {
 }
 
 func Get(modules modules.List) (Coverage, error) {
-	defer os.Remove("c.out")
 	err := runTests(modules)
 	if err != nil {
 		return 0, err
