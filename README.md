@@ -57,3 +57,15 @@ Having set up project-level variables `COVERAGE` (should be settable) and
         - "newcoverage=$(gocicov)"
         - "if [ $BUDDY_EXECUTION_BRANCH = master ]; then COVERAGE=$newcoverage ; fi"
 ```
+
+## Skipping coverage
+
+It is possible to skip coverage of specific packages where code coverage makes
+no sense (like generated code). A file called `.coverageignore` can contain a
+list of import paths to ignore. For example:
+```
+./cmd/app
+./external/...
+```
+
+Note that skipping coverage also skips performing tests for affected modules.

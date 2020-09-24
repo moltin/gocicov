@@ -6,12 +6,24 @@ import (
 
 	"github.com/moltin/gocicov/internal/coverage"
 	"github.com/moltin/gocicov/internal/forcetest"
+	"github.com/moltin/gocicov/internal/modules"
 )
 
 func main() {
+	ignores, err := modules.FromFile(".coverageignore")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(2)
+	}
+	modules, err := modules.Load("./...")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(2)
+	}
+	modules = modules.Filter(ignores)
 	forceTest := forcetest.New(".")
-	forceTest.Prepare()
-	cov, err := coverage.Get()
+	forceTest.Prepare(modules)
+	cov, err := coverage.Get(modules)
 	forceTest.Cleanup()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

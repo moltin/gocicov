@@ -6,11 +6,27 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"github.com/moltin/gocicov/internal/modules"
 )
 
-func runTests() error {
-	cmdString := "go test -v $(go list ./... | grep  /internal/) -coverprofile c.out"
-	cmd := exec.Command("bash", "-c", cmdString)
+func filterModules(modules modules.List) []string {
+	r := make([]string, 0, len(modules))
+	for _, mod := range modules {
+		file := mod.Path + "/.skip_coverage"
+		_, err := os.Stat(file)
+		if err == nil {
+			continue
+		}
+		r = append(r, mod.ImportPath)
+	}
+	return r
+}
+
+func runTests(modules modules.List) error {
+	args := []string{"test", "-v", "-coverprofile", "c.out"}
+	args = append(args, filterModules(modules)...)
+	cmd := exec.Command("go", args...)
 	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
@@ -49,9 +65,9 @@ func parseCoverage(coverage string) (Coverage, error) {
 	return Coverage(cov), err
 }
 
-func Get() (Coverage, error) {
+func Get(modules modules.List) (Coverage, error) {
 	defer os.Remove("c.out")
-	err := runTests()
+	err := runTests(modules)
 	if err != nil {
 		return 0, err
 	}

@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/moltin/gocicov/internal/modules"
 )
 
 type Forcer struct {
@@ -57,13 +59,12 @@ func (f *Forcer) checkDir(path string) error {
 	return f.addForcer(path, pkgnam)
 }
 
-func (f *Forcer) Prepare() error {
-	filepath.Walk(f.dir, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return f.checkDir(path)
+func (f *Forcer) Prepare(m modules.List) error {
+	for _, path := range m.Paths() {
+		if err := f.checkDir(path); err != nil {
+			return err
 		}
-		return nil
-	})
+	}
 	return nil
 }
 
